@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AddQuestDialog</class>
+ <widget class="QDialog" name="AddQuestDialog">
+  <property name="windowTitle">
+   <string>Add Quest</string>
+  </property>
+
+  <layout class="QFormLayout">
+   <item row="0" column="0">
+    <widget class="QLabel">
+     <property name="text">
+      <string>Quest Name</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="questNameInput"/>
+   </item>
+
+   <item row="1" column="0">
+    <widget class="QLabel">
+     <property name="text">
+      <string>Difficulty</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="difficultyCombo">
+     <item><property name="text"><string>Easy</string></property></item>
+     <item><property name="text"><string>Medium</string></property></item>
+     <item><property name="text"><string>Hard</string></property></item>
+    </widget>
+   </item>
+
+   <item row="2" column="1">
+    <widget class="QPushButton" name="createQuestButton">
+     <property name="text">
+      <string>Create Quest</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+</ui>

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dashboard</class>
+ <widget class="QMainWindow" name="Dashboard">
+  <property name="windowTitle">
+   <string>QuestForge - Dashboard</string>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+
+  <!-- CENTRAL WIDGET -->
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="rootLayout">
+    <item>
+
+     <!-- TOP BAR -->
+     <layout class="QHBoxLayout" name="topBar">
+      <item>
+       <widget class="QLabel" name="titleLabel">
+        <property name="text">
+         <string>🏰 Quest Dashboard</string>
+        </property>
+        <property name="styleSheet">
+         <string>font-size: 22px; font-weight: bold;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="topSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="statsLabel">
+        <property name="text">
+         <string>Lvl 1 • XP 0/50 • Gold 0</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+
+    </item>
+
+    <!-- BOSS PANEL -->
+    <item>
+     <layout class="QVBoxLayout" name="bossPanel">
+      <item>
+       <widget class="QLabel" name="bossName">
+        <property name="text">
+         <string>🩸 Weekly Boss: Procrastinator</string>
+        </property>
+        <property name="styleSheet">
+         <string>font-size: 16px; font-weight: bold;</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="bossHpBar">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+        <property name="textVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+
+    <!-- MAIN CONTENT -->
+    <item>
+     <layout class="QHBoxLayout" name="contentLayout">
+
+      <!-- QUEST LIST -->
+      <item>
+       <widget class="QListWidget" name="questList"/>
+      </item>
+
+      <!-- ACTION BUTTONS -->
+      <item>
+       <layout class="QVBoxLayout" name="actionPanel">
+        <item>
+         <widget class="QPushButton" name="addQuestButton">
+          <property name="text">
+           <string>➕ Add Quest</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="completeQuestButton">
+          <property name="text">
+           <string>✅ Complete Quest</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="actionSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+
+     </layout>
+    </item>
+
+   </layout>
+  </widget>
+
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
