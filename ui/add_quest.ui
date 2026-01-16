@@ -5,41 +5,58 @@
   <property name="windowTitle">
    <string>Add Quest</string>
   </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>200</height>
+   </rect>
+  </property>
 
-  <layout class="QFormLayout">
-   <item row="0" column="0">
-    <widget class="QLabel">
+  <layout class="QVBoxLayout" name="rootLayout">
+
+   <item>
+    <widget class="QLabel" name="titleLabel">
      <property name="text">
-      <string>Quest Name</string>
+      <string>➕ New Quest</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="styleSheet">
+      <string>font-size:18px;font-weight:bold;</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QLineEdit" name="questNameInput"/>
-   </item>
 
-   <item row="1" column="0">
-    <widget class="QLabel">
-     <property name="text">
-      <string>Difficulty</string>
+   <item>
+    <widget class="QLineEdit" name="questNameInput">
+     <property name="placeholderText">
+      <string>Quest description...</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="difficultyCombo">
-     <item><property name="text"><string>Easy</string></property></item>
-     <item><property name="text"><string>Medium</string></property></item>
-     <item><property name="text"><string>Hard</string></property></item>
-    </widget>
+
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QPushButton" name="cancelButton">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addButton">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
 
-   <item row="2" column="1">
-    <widget class="QPushButton" name="createQuestButton">
-     <property name="text">
-      <string>Create Quest</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
 </ui>

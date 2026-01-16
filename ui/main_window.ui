@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowTitle">
+   <string>Quest RPG</string>
+  </property>
+
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="rootLayout">
+
+    <!-- SIDEBAR -->
+    <item>
+     <widget class="QFrame" name="sidebar">
+      <property name="minimumWidth">
+       <number>200</number>
+      </property>
+      <property name="maximumWidth">
+       <number>220</number>
+      </property>
+      <layout class="QVBoxLayout" name="sidebarLayout">
+
+       <item>
+        <widget class="QLabel" name="appTitle">
+         <property name="text">
+          <string>⚔ QUEST RPG</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QPushButton" name="btnDashboard">
+         <property name="text">
+          <string>🏠 Dashboard</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QPushButton" name="btnDaily">
+         <property name="text">
+          <string>📅 Daily Quests</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QPushButton" name="btnQuests">
+         <property name="text">
+          <string>📜 Quests</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QPushButton" name="btnStats">
+         <property name="text">
+          <string>📊 Stats</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <widget class="QPushButton" name="btnInventory">
+         <property name="text">
+          <string>🎒 Inventory</string>
+         </property>
+        </widget>
+       </item>
+
+       <item>
+        <spacer name="sidebarSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+
+      </layout>
+     </widget>
+    </item>
+
+    <!-- MAIN CONTENT -->
+    <item>
+     <widget class="QStackedWidget" name="stackedPages">
+
+      <!-- DASHBOARD PAGE -->
+      <widget class="QWidget" name="pageDashboard">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Dashboard (Overview)</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- DAILY QUESTS PAGE -->
+      <widget class="QWidget" name="pageDaily">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Daily Quests</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- QUESTS PAGE -->
+      <widget class="QWidget" name="pageQuests">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Manage Quests</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- STATS PAGE -->
+      <widget class="QWidget" name="pageStats">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Player Stats</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+      <!-- INVENTORY PAGE -->
+      <widget class="QWidget" name="pageInventory">
+       <layout class="QVBoxLayout">
+        <item>
+         <widget class="QLabel">
+          <property name="text">
+           <string>Inventory</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+
+     </widget>
+    </item>
+
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
