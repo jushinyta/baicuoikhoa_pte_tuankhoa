@@ -2,24 +2,22 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>308</width>
+    <height>184</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Quest RPG</string>
   </property>
-
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="rootLayout">
-
-    <!-- SIDEBAR -->
     <item>
      <widget class="QFrame" name="sidebar">
-      <property name="minimumWidth">
-       <number>200</number>
-      </property>
-      <property name="maximumWidth">
-       <number>220</number>
-      </property>
       <layout class="QVBoxLayout" name="sidebarLayout">
-
        <item>
         <widget class="QLabel" name="appTitle">
          <property name="text">
@@ -30,7 +28,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <widget class="QPushButton" name="btnDashboard">
          <property name="text">
@@ -38,7 +35,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <widget class="QPushButton" name="btnDaily">
          <property name="text">
@@ -46,7 +42,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <widget class="QPushButton" name="btnQuests">
          <property name="text">
@@ -54,7 +49,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <widget class="QPushButton" name="btnStats">
          <property name="text">
@@ -62,7 +56,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <widget class="QPushButton" name="btnInventory">
          <property name="text">
@@ -70,7 +63,6 @@
          </property>
         </widget>
        </item>
-
        <item>
         <spacer name="sidebarSpacer">
          <property name="orientation">
@@ -84,20 +76,18 @@
          </property>
         </spacer>
        </item>
-
       </layout>
      </widget>
     </item>
-
-    <!-- MAIN CONTENT -->
     <item>
-     <widget class="QStackedWidget" name="stackedPages">
-
-      <!-- DASHBOARD PAGE -->
+     <widget class="QStackedWidget" name="pages">
+      <property name="currentIndex">
+       <number>4</number>
+      </property>
       <widget class="QWidget" name="pageDashboard">
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel">
+         <widget class="QLabel" name="label">
           <property name="text">
            <string>Dashboard (Overview)</string>
           </property>
@@ -108,12 +98,10 @@
         </item>
        </layout>
       </widget>
-
-      <!-- DAILY QUESTS PAGE -->
       <widget class="QWidget" name="pageDaily">
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel">
+         <widget class="QLabel" name="label">
           <property name="text">
            <string>Daily Quests</string>
           </property>
@@ -124,12 +112,10 @@
         </item>
        </layout>
       </widget>
-
-      <!-- QUESTS PAGE -->
       <widget class="QWidget" name="pageQuests">
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel">
+         <widget class="QLabel" name="label">
           <property name="text">
            <string>Manage Quests</string>
           </property>
@@ -140,12 +126,10 @@
         </item>
        </layout>
       </widget>
-
-      <!-- STATS PAGE -->
       <widget class="QWidget" name="pageStats">
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel">
+         <widget class="QLabel" name="label">
           <property name="text">
            <string>Player Stats</string>
           </property>
@@ -156,12 +140,10 @@
         </item>
        </layout>
       </widget>
-
-      <!-- INVENTORY PAGE -->
       <widget class="QWidget" name="pageInventory">
        <layout class="QVBoxLayout">
         <item>
-         <widget class="QLabel">
+         <widget class="QLabel" name="label">
           <property name="text">
            <string>Inventory</string>
           </property>
@@ -172,10 +154,8 @@
         </item>
        </layout>
       </widget>
-
      </widget>
     </item>
-
    </layout>
   </widget>
  </widget>

@@ -12,61 +12,61 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_FILE = os.path.join(BASE_DIR, "save.json")
 
 # ------------------ BOSS DATA ------------------
+
 BOSSES = [
     {"name": "🐉 Dragon of Procrastination", "hp": 100, "img": "dragon.png"},
     {"name": "🕷 Spider of Distraction", "hp": 120, "img": "spider.png"},
     {"name": "😈 Demon of Burnout", "hp": 150, "img": "demon.png"},
     {"name": "👹 Ogre of Laziness", "hp": 130, "img": "ogre.png"},
-    {"name": "🦹‍♂️ Villain of Overwhelm", "hp": 160, "img": "villain.png"},    
+    {"name": "🦹 Villain of Overwhelm", "hp": 160, "img": "villain.png"},
 ]
 
 # ------------------ DAILY QUESTS ------------------
+
 DAILY_QUESTS = [
     ("Study 25 minutes", 20, 10),
-    ("Clean your desk", 15, 8),
+    ("Clean desk", 15, 8),
     ("Exercise", 25, 12),
     ("Read 10 pages", 20, 10),
 ]
 
+# =================================================
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, username="Player"):
         super().__init__()
-        
-        path = os.path.join(BASE_DIR, "ui/daily_quests.ui")
-        print("Daily UI exists:", os.path.exists(path))
-        print("Daily UI size:", os.path.getsize(path))
-
-        
-        ui_path = os.path.join(BASE_DIR, "ui/main_window.ui")
-        print("UI exists:", os.path.exists(ui_path))
-        print("UI size:", os.path.getsize(ui_path))
-
         uic.loadUi(os.path.join(BASE_DIR, "ui/main_window.ui"), self)
 
         # Load pages
         self.dashboard = uic.loadUi(os.path.join(BASE_DIR, "ui/dashboard.ui"))
         self.daily = uic.loadUi(os.path.join(BASE_DIR, "ui/daily_quests.ui"))
+        self.tasks = uic.loadUi(os.path.join(BASE_DIR, "ui/tasks.ui"))
 
         self.pages.addWidget(self.dashboard)
         self.pages.addWidget(self.daily)
+        self.pages.addWidget(self.tasks)
 
-        # Sidebar navigation
+        # Navigation
         self.btnDashboard.clicked.connect(lambda: self.pages.setCurrentWidget(self.dashboard))
         self.btnDaily.clicked.connect(lambda: self.pages.setCurrentWidget(self.daily))
+        self.btnTasks.clicked.connect(lambda: self.pages.setCurrentWidget(self.tasks))
 
         # Game state
+        self.username = username
         self.level = 1
         self.xp = 0
         self.xp_needed = 100
+        self.custom_tasks = []
 
         self.load_progress()
         self.setup_sounds()
         self.setup_boss()
         self.populate_daily_quests()
+        self.populate_tasks()
+        self.connect_task_ui()
         self.update_ui()
 
-    # ------------------ BOSS SYSTEM ------------------
+    # ------------------ BOSS ------------------
 
     def setup_boss(self):
         week = datetime.date.today().isocalendar()[1]
@@ -89,14 +89,14 @@ class MainWindow(QMainWindow):
         new_hp = max(0, self.boss_hp - dmg)
 
         anim = QPropertyAnimation(self.dashboard.bossHpBar, b"value")
-        anim.setDuration(500)
+        anim.setDuration(400)
         anim.setStartValue(self.boss_hp)
         anim.setEndValue(new_hp)
         anim.start()
 
         self.boss_hp = new_hp
 
-    # ------------------ XP SYSTEM ------------------
+    # ------------------ XP ------------------
 
     def add_xp(self, amount):
         self.xp += amount
@@ -116,7 +116,6 @@ class MainWindow(QMainWindow):
     def populate_daily_quests(self):
         layout = self.daily.dailyList
 
-        # Clear old
         while layout.count():
             item = layout.takeAt(0)
             if item.widget():
@@ -136,17 +135,64 @@ class MainWindow(QMainWindow):
 
             layout.addWidget(row)
 
-    def complete_quest(self, xp, dmg):
-        self.add_xp(xp)
-        self.damage_boss(dmg)
+    # ------------------ CUSTOM QUESTS ------------------
 
-    # ------------------ SAVE SYSTEM ------------------
+    def connect_task_ui(self):
+        self.tasks.addTaskBtn.clicked.connect(self.add_task)
+
+    def add_task(self):
+        name = self.tasks.taskNameInput.text().strip()
+        xp = self.tasks.xpInput.value()
+        dmg = self.tasks.dmgInput.value()
+
+        if not name:
+            return
+
+        task = {"name": name, "xp": xp, "dmg": dmg}
+        self.custom_tasks.append(task)
+
+        self.tasks.taskNameInput.clear()
+        self.populate_tasks()
+        self.save_progress()
+
+    def populate_tasks(self):
+        layout = self.tasks.taskList
+
+        while layout.count():
+            item = layout.takeAt(0)
+            if item.widget():
+                item.widget().deleteLater()
+
+        for task in self.custom_tasks:
+            row = QWidget()
+            row_layout = QHBoxLayout(row)
+
+            label = QLabel(f"{task['name']} (+{task['xp']} XP, -{task['dmg']} HP)")
+            btn = QPushButton("Complete")
+
+            btn.clicked.connect(lambda _, t=task: self.complete_custom_task(t))
+
+            row_layout.addWidget(label)
+            row_layout.addStretch()
+            row_layout.addWidget(btn)
+
+            layout.addWidget(row)
+
+    def complete_custom_task(self, task):
+        self.add_xp(task["xp"])
+        self.damage_boss(task["dmg"])
+        self.custom_tasks.remove(task)
+        self.populate_tasks()
+        self.save_progress()
+
+    # ------------------ SAVE ------------------
 
     def save_progress(self):
         data = {
             "level": self.level,
             "xp": self.xp,
-            "xp_needed": self.xp_needed
+            "xp_needed": self.xp_needed,
+            "tasks": self.custom_tasks
         }
         with open(SAVE_FILE, "w") as f:
             json.dump(data, f)
@@ -158,8 +204,9 @@ class MainWindow(QMainWindow):
                 self.level = data.get("level", 1)
                 self.xp = data.get("xp", 0)
                 self.xp_needed = data.get("xp_needed", 100)
+                self.custom_tasks = data.get("tasks", [])
 
-    # ------------------ UI UPDATE ------------------
+    # ------------------ UI ------------------
 
     def update_ui(self):
         self.dashboard.levelLabel.setText(f"Level {self.level}")
@@ -179,11 +226,16 @@ class MainWindow(QMainWindow):
             os.path.join(BASE_DIR, "assets/sounds/levelup.wav")
         ))
 
+    # ------------------ DAILY COMPLETE ------------------
+
+    def complete_quest(self, xp, dmg):
+        self.add_xp(xp)
+        self.damage_boss(dmg)
 
 # ------------------ RUN ------------------
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow("Player")
     window.show()
     sys.exit(app.exec_())

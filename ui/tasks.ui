@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TasksPage</class>
+ <widget class="QWidget" name="TasksPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Tasks</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <!-- TITLE -->
+   <item>
+    <widget class="QLabel" name="titleLabel">
+     <property name="text">
+      <string>⚔ Create Quest</string>
+     </property>
+     <property name="styleSheet">
+      <string>font-size: 22px; font-weight: bold;</string>
+     </property>
+    </widget>
+   </item>
+
+   <!-- INPUT ROW -->
+   <item>
+    <layout class="QHBoxLayout" name="inputLayout">
+
+     <item>
+      <widget class="QLineEdit" name="taskNameInput">
+       <property name="placeholderText">
+        <string>Quest name...</string>
+       </property>
+      </widget>
+     </item>
+
+     <item>
+      <widget class="QSpinBox" name="xpInput">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>1000</number>
+       </property>
+       <property name="value">
+        <number>20</number>
+       </property>
+      </widget>
+     </item>
+
+     <item>
+      <widget class="QSpinBox" name="damageInput">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>500</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+
+     <item>
+      <widget class="QPushButton" name="addTaskBtn">
+       <property name="text">
+        <string>Add Quest</string>
+       </property>
+      </widget>
+     </item>
+
+    </layout>
+   </item>
+
+   <!-- LABELS -->
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel">
+       <property name="text">
+        <string>XP</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel">
+       <property name="text">
+        <string>Damage</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+
+   <!-- TASK LIST -->
+   <item>
+    <widget class="QScrollArea" name="taskScroll">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <layout class="QVBoxLayout" name="taskListLayout"/>
+     </widget>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
