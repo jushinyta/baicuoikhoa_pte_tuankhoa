@@ -2,11 +2,10 @@ import sys, os, json, datetime
 from PyQt5 import uic
 from PyQt5.QtWidgets import (
     QApplication, QMainWindow, QWidget,
-    QHBoxLayout, QLabel, QPushButton
+    QHBoxLayout, QLabel, QPushButton, QVBoxLayout
 )
-from PyQt5.QtCore import Qt, QPropertyAnimation, QUrl
+from PyQt5.QtCore import Qt, QPropertyAnimation
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtMultimedia import QSoundEffect
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SAVE_FILE = os.path.join(BASE_DIR, "save.json")
@@ -14,20 +13,11 @@ SAVE_FILE = os.path.join(BASE_DIR, "save.json")
 # ------------------ BOSS DATA ------------------
 
 BOSSES = [
-    {"name": "🐉 Dragon of Procrastination", "hp": 100, "img": "dragon.png"},
-    {"name": "🕷 Spider of Distraction", "hp": 120, "img": "spider.png"},
-    {"name": "😈 Demon of Burnout", "hp": 150, "img": "demon.png"},
-    {"name": "👹 Ogre of Laziness", "hp": 130, "img": "ogre.png"},
-    {"name": "🦹 Villain of Overwhelm", "hp": 160, "img": "villain.png"},
-]
-
-# ------------------ DAILY QUESTS ------------------
-
-DAILY_QUESTS = [
-    ("Study 25 minutes", 20, 10),
-    ("Clean desk", 15, 8),
-    ("Exercise", 25, 12),
-    ("Read 10 pages", 20, 10),
+    {"name": "🐉 Dragon of Procrastination", "hp": 100},
+    {"name": "🕷 Spider of Distraction", "hp": 120},
+    {"name": "😈 Demon of Burnout", "hp": 150},
+    {"name": "👹 Ogre of Laziness", "hp": 130},
+    {"name": "🦹 Villain of Overwhelm", "hp": 160},
 ]
 
 # =================================================
@@ -37,19 +27,74 @@ class MainWindow(QMainWindow):
         super().__init__()
         uic.loadUi(os.path.join(BASE_DIR, "ui/main_window.ui"), self)
 
-        # Load pages
-        self.dashboard = uic.loadUi(os.path.join(BASE_DIR, "ui/dashboard.ui"))
-        self.daily = uic.loadUi(os.path.join(BASE_DIR, "ui/daily_quests.ui"))
-        self.tasks = uic.loadUi(os.path.join(BASE_DIR, "ui/tasks.ui"))
+        self.setStyleSheet("""
+        /* ===== MAIN WINDOW ===== */
+        QMainWindow {
+            background-color: #12121a;
+        }
 
-        self.pages.addWidget(self.dashboard)
-        self.pages.addWidget(self.daily)
-        self.pages.addWidget(self.tasks)
+        /* Central Area */
+        QWidget#centralwidget {
+            background-color: #181824;
+            color: #e6e6e6;
+            font-family: Segoe UI;
+            font-size: 14px;
+        }
 
-        # Navigation
-        self.btnDashboard.clicked.connect(lambda: self.pages.setCurrentWidget(self.dashboard))
-        self.btnDaily.clicked.connect(lambda: self.pages.setCurrentWidget(self.daily))
-        self.btnTasks.clicked.connect(lambda: self.pages.setCurrentWidget(self.tasks))
+        /* ===== SIDEBAR ===== */
+        QFrame#sidebar {
+            background-color: #0f0f18;
+        }
+
+        QPushButton {
+            background-color: #23233a;
+            color: #e6e6e6;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        QPushButton:hover {
+            background-color: #2e2e4d;
+        }
+
+        QPushButton:pressed {
+            background-color: #3b3b66;
+        }
+
+        /* ===== LABELS ===== */
+        QLabel {
+            color: #e6e6e6;
+        }
+
+        /* ===== PROGRESS BARS (Boss HP / XP later) ===== */
+        QProgressBar {
+            background-color: #2a2a3d;
+            border-radius: 8px;
+            text-align: center;
+            height: 18px;
+        }
+
+        QProgressBar::chunk {
+            background-color: #8b0000;  /* Dark red boss HP */
+            border-radius: 8px;
+        }
+
+        /* ===== INPUTS ===== */
+        QLineEdit, QSpinBox {
+            background-color: #23233a;
+            border: 1px solid #33334d;
+            padding: 4px;
+            border-radius: 6px;
+            color: #ffffff;
+        }
+
+        /* ===== SCROLL AREA ===== */
+        QScrollArea {
+            border: none;
+        }
+        """)
 
         # Game state
         self.username = username
@@ -58,12 +103,21 @@ class MainWindow(QMainWindow):
         self.xp_needed = 100
         self.custom_tasks = []
 
-        self.load_progress()
-        self.setup_sounds()
+        # Navigation
+        self.btnDashboard.clicked.connect(
+            lambda: self.pages.setCurrentWidget(self.pageDashboard)
+        )
+        self.btnDaily.clicked.connect(
+            lambda: self.pages.setCurrentWidget(self.pageDaily)
+        )
+        self.btnTasks.clicked.connect(
+            lambda: self.pages.setCurrentWidget(self.pageTasks)
+        )
+
+        # Setup systems
         self.setup_boss()
-        self.populate_daily_quests()
-        self.populate_tasks()
-        self.connect_task_ui()
+        self.setup_task_system()
+        self.load_progress()
         self.update_ui()
 
     # ------------------ BOSS ------------------
@@ -75,91 +129,65 @@ class MainWindow(QMainWindow):
         self.boss_max_hp = self.boss_data["hp"]
         self.boss_hp = self.boss_max_hp
 
-        self.dashboard.bossName.setText(self.boss_data["name"])
-        self.dashboard.bossHpBar.setMaximum(self.boss_max_hp)
-        self.dashboard.bossHpBar.setValue(self.boss_hp)
+        # Create boss UI dynamically
+        layout = self.dashboardContentLayout
 
-        img_path = os.path.join(BASE_DIR, "assets/bosses", self.boss_data["img"])
-        pix = QPixmap(img_path)
-        self.dashboard.bossImage.setPixmap(
-            pix.scaled(260, 260, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-        )
+        self.bossName = QLabel(self.boss_data["name"])
+        self.bossName.setStyleSheet("font-size:18px; font-weight:bold;")
+
+        self.bossHpBar = QLabel(f"Boss HP: {self.boss_hp}/{self.boss_max_hp}")
+
+        layout.addWidget(self.bossName)
+        layout.addWidget(self.bossHpBar)
 
     def damage_boss(self, dmg):
-        new_hp = max(0, self.boss_hp - dmg)
-
-        anim = QPropertyAnimation(self.dashboard.bossHpBar, b"value")
-        anim.setDuration(400)
-        anim.setStartValue(self.boss_hp)
-        anim.setEndValue(new_hp)
-        anim.start()
-
-        self.boss_hp = new_hp
+        self.boss_hp = max(0, self.boss_hp - dmg)
+        self.bossHpBar.setText(
+            f"Boss HP: {self.boss_hp}/{self.boss_max_hp}"
+        )
 
     # ------------------ XP ------------------
 
     def add_xp(self, amount):
         self.xp += amount
-        self.complete_sound.play()
 
         if self.xp >= self.xp_needed:
             self.xp -= self.xp_needed
             self.level += 1
             self.xp_needed = int(self.xp_needed * 1.2)
-            self.levelup_sound.play()
 
         self.update_ui()
         self.save_progress()
 
-    # ------------------ DAILY QUESTS ------------------
+    def update_ui(self):
+        self.setWindowTitle(f"{self.username} - Level {self.level}")
 
-    def populate_daily_quests(self):
-        layout = self.daily.dailyList
+    # ------------------ TASK SYSTEM ------------------
 
-        while layout.count():
-            item = layout.takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
+    def setup_task_system(self):
+        layout = self.tasksContainerLayout
 
-        for text, xp, dmg in DAILY_QUESTS:
-            row = QWidget()
-            row_layout = QHBoxLayout(row)
+        # Add input row
+        input_row = QWidget()
+        input_layout = QHBoxLayout(input_row)
 
-            label = QLabel(text)
-            btn = QPushButton("Complete")
-            btn.clicked.connect(lambda _, x=xp, d=dmg: self.complete_quest(x, d))
+        self.taskNameInput = QLabel("Use code to add tasks")  # placeholder
 
-            row_layout.addWidget(label)
-            row_layout.addStretch()
-            row_layout.addWidget(btn)
+        input_layout.addWidget(self.taskNameInput)
+        layout.addWidget(input_row)
 
-            layout.addWidget(row)
-
-    # ------------------ CUSTOM QUESTS ------------------
-
-    def connect_task_ui(self):
-        self.tasks.addTaskBtn.clicked.connect(self.add_task)
-
-    def add_task(self):
-        name = self.tasks.taskNameInput.text().strip()
-        xp = self.tasks.xpInput.value()
-        dmg = self.tasks.dmgInput.value()
-
-        if not name:
-            return
-
+    def add_task(self, name, xp, dmg):
         task = {"name": name, "xp": xp, "dmg": dmg}
         self.custom_tasks.append(task)
-
-        self.tasks.taskNameInput.clear()
         self.populate_tasks()
         self.save_progress()
 
     def populate_tasks(self):
-        layout = self.tasks.taskList
+        layout = self.tasksContainerLayout
 
-        while layout.count():
-            item = layout.takeAt(0)
+        # Clear existing
+        while layout.count() > 1:
+            item = layout.takeAt(1)
             if item.widget():
                 item.widget().deleteLater()
 
@@ -167,10 +195,14 @@ class MainWindow(QMainWindow):
             row = QWidget()
             row_layout = QHBoxLayout(row)
 
-            label = QLabel(f"{task['name']} (+{task['xp']} XP, -{task['dmg']} HP)")
+            label = QLabel(
+                f"{task['name']} (+{task['xp']} XP, -{task['dmg']} HP)"
+            )
             btn = QPushButton("Complete")
 
-            btn.clicked.connect(lambda _, t=task: self.complete_custom_task(t))
+            btn.clicked.connect(
+                lambda _, t=task: self.complete_task(t)
+            )
 
             row_layout.addWidget(label)
             row_layout.addStretch()
@@ -178,7 +210,7 @@ class MainWindow(QMainWindow):
 
             layout.addWidget(row)
 
-    def complete_custom_task(self, task):
+    def complete_task(self, task):
         self.add_xp(task["xp"])
         self.damage_boss(task["dmg"])
         self.custom_tasks.remove(task)
@@ -205,32 +237,7 @@ class MainWindow(QMainWindow):
                 self.xp = data.get("xp", 0)
                 self.xp_needed = data.get("xp_needed", 100)
                 self.custom_tasks = data.get("tasks", [])
-
-    # ------------------ UI ------------------
-
-    def update_ui(self):
-        self.dashboard.levelLabel.setText(f"Level {self.level}")
-        self.dashboard.xpBar.setMaximum(self.xp_needed)
-        self.dashboard.xpBar.setValue(self.xp)
-
-    # ------------------ SOUND ------------------
-
-    def setup_sounds(self):
-        self.complete_sound = QSoundEffect()
-        self.complete_sound.setSource(QUrl.fromLocalFile(
-            os.path.join(BASE_DIR, "assets/sounds/complete.wav")
-        ))
-
-        self.levelup_sound = QSoundEffect()
-        self.levelup_sound.setSource(QUrl.fromLocalFile(
-            os.path.join(BASE_DIR, "assets/sounds/levelup.wav")
-        ))
-
-    # ------------------ DAILY COMPLETE ------------------
-
-    def complete_quest(self, xp, dmg):
-        self.add_xp(xp)
-        self.damage_boss(dmg)
+        self.populate_tasks()
 
 # ------------------ RUN ------------------
 

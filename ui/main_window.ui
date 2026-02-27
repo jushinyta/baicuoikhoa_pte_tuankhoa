@@ -6,156 +6,167 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>308</width>
-    <height>184</height>
+    <width>1100</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Quest RPG</string>
+   <string>Quest Manager</string>
   </property>
+
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="rootLayout">
+   <layout class="QHBoxLayout" name="mainLayout">
+
+    <!-- SIDEBAR -->
     <item>
      <widget class="QFrame" name="sidebar">
+      <property name="minimumWidth">
+       <number>220</number>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">
+        QFrame { background-color: #1e1e2f; }
+        QPushButton {
+          color: white;
+          background-color: #2a2a40;
+          border: none;
+          padding: 12px;
+          font-size: 14px;
+          text-align: left;
+        }
+        QPushButton:hover { background-color: #3a3a55; }
+        QLabel { color: white; }
+       </string>
+      </property>
+
       <layout class="QVBoxLayout" name="sidebarLayout">
+
        <item>
         <widget class="QLabel" name="appTitle">
          <property name="text">
-          <string>⚔ QUEST RPG</string>
+          <string>🎮 Quest App</string>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+         <property name="styleSheet">
+          <string>font-size:18px; font-weight:bold;</string>
          </property>
         </widget>
        </item>
+
        <item>
         <widget class="QPushButton" name="btnDashboard">
          <property name="text">
-          <string>🏠 Dashboard</string>
+          <string>Dashboard</string>
          </property>
         </widget>
        </item>
+
        <item>
         <widget class="QPushButton" name="btnDaily">
          <property name="text">
-          <string>📅 Daily Quests</string>
+          <string>Daily Quests</string>
          </property>
         </widget>
        </item>
+
        <item>
-        <widget class="QPushButton" name="btnQuests">
+        <widget class="QPushButton" name="btnTasks">
          <property name="text">
-          <string>📜 Quests</string>
+          <string>Tasks</string>
          </property>
         </widget>
        </item>
+
        <item>
-        <widget class="QPushButton" name="btnStats">
-         <property name="text">
-          <string>📊 Stats</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="btnInventory">
-         <property name="text">
-          <string>🎒 Inventory</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="sidebarSpacer">
+        <spacer name="spacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
         </spacer>
        </item>
+
       </layout>
      </widget>
     </item>
+
+    <!-- STACKED PAGES -->
     <item>
      <widget class="QStackedWidget" name="pages">
-      <property name="currentIndex">
-       <number>4</number>
-      </property>
+
+      <!-- DASHBOARD PAGE -->
       <widget class="QWidget" name="pageDashboard">
-       <layout class="QVBoxLayout">
+       <layout class="QVBoxLayout" name="dashboardLayout">
+
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="dashboardTitle">
           <property name="text">
-           <string>Dashboard (Overview)</string>
+           <string>Dashboard</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="styleSheet">
+           <string>font-size:22px; font-weight:bold;</string>
           </property>
          </widget>
         </item>
+
+        <item>
+         <widget class="QFrame" name="dashboardContent">
+          <layout class="QVBoxLayout" name="dashboardContentLayout"/>
+         </widget>
+        </item>
+
        </layout>
       </widget>
+
+      <!-- DAILY PAGE -->
       <widget class="QWidget" name="pageDaily">
-       <layout class="QVBoxLayout">
+       <layout class="QVBoxLayout" name="dailyLayout">
+
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="dailyTitle">
           <property name="text">
            <string>Daily Quests</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="styleSheet">
+           <string>font-size:22px; font-weight:bold;</string>
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="pageQuests">
-       <layout class="QVBoxLayout">
+
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Manage Quests</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
+         <widget class="QFrame" name="dailyContainer">
+          <layout class="QVBoxLayout" name="dailyContainerLayout"/>
          </widget>
         </item>
+
        </layout>
       </widget>
-      <widget class="QWidget" name="pageStats">
-       <layout class="QVBoxLayout">
+
+      <!-- TASKS PAGE -->
+      <widget class="QWidget" name="pageTasks">
+       <layout class="QVBoxLayout" name="tasksLayout">
+
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="tasksTitle">
           <property name="text">
-           <string>Player Stats</string>
+           <string>Tasks</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="styleSheet">
+           <string>font-size:22px; font-weight:bold;</string>
           </property>
          </widget>
         </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="pageInventory">
-       <layout class="QVBoxLayout">
+
         <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Inventory</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
+         <widget class="QFrame" name="tasksContainer">
+          <layout class="QVBoxLayout" name="tasksContainerLayout"/>
          </widget>
         </item>
+
        </layout>
       </widget>
+
      </widget>
     </item>
+
    </layout>
   </widget>
  </widget>
