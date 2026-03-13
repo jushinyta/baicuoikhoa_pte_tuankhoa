@@ -1,0 +1,17 @@
+{
+  "level": 4,
+  "xp": 36,
+  "gold": 48,
+  "tasks": [],
+  "stats": {
+    "strength": 4,
+    "focus": 4,
+    "luck": 4
+  },
+  "upgrades": {
+    "sword": false,
+    "xp_boost": true,
+    "gold_boost": false
+  },
+  "streak": 0
+}
