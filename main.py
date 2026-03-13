@@ -1,10 +1,14 @@
-import sys, os, json, datetime, random
+import sys, os, json, datetime, random, hashlib
 from PyQt6 import uic
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import QPropertyAnimation, QPoint, QTimer
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SAVE_FILE = os.path.join(BASE_DIR, "save.json")
+
+SAVE_DIR = os.path.join(BASE_DIR, "saves")
+USERS_FILE = os.path.join(SAVE_DIR, "users.json")
+
+os.makedirs(SAVE_DIR, exist_ok=True)
 
 BOSSES = [
 "🐉 Dragon of Procrastination",
@@ -22,6 +26,10 @@ MOTIVATION = [
 "Keep going. You're leveling up."
 ]
 
+
+# ---------------------------
+# GAME STATE
+# ---------------------------
 
 class GameState:
     def __init__(self):
@@ -41,10 +49,87 @@ class GameState:
         }
 
 
-class MainWindow(QMainWindow):
+# ---------------------------
+# LOGIN WINDOW
+# ---------------------------
+
+class LoginWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
+        uic.loadUi(os.path.join(BASE_DIR,"ui","login_window.ui"),self)
+
+        self.loginButton.clicked.connect(self.login)
+
+        self.passwordInput.returnPressed.connect(self.login)
+
+        self.setStyleSheet("""
+        QMainWindow {
+            background-color: #1e1e2e;
+        }
+
+        QLineEdit {
+            border: none;
+        }
+
+        QPushButton {
+            font-weight: bold;
+        }
+        """)
+
+    def hash_password(self,password):
+        return hashlib.sha256(password.encode()).hexdigest()
+
+    def login(self):
+
+        username = self.usernameInput.text().strip()
+        password = self.passwordInput.text().strip()
+
+        if not username or not password:
+            QMessageBox.warning(self,"Login","Enter username and password")
+            return
+
+        password_hash = self.hash_password(password)
+
+        users = {}
+
+        if os.path.exists(USERS_FILE):
+            with open(USERS_FILE,"r") as f:
+                users = json.load(f)
+
+        if username not in users:
+
+            users[username] = password_hash
+
+            with open(USERS_FILE,"w") as f:
+                json.dump(users,f,indent=2)
+
+            QMessageBox.information(self,"Account Created","New account created!")
+
+        else:
+
+            if users[username] != password_hash:
+                QMessageBox.warning(self,"Login","Wrong password")
+                return
+
+        self.main = MainWindow(username)
+        self.main.show()
+
+        self.close()
+
+
+# ---------------------------
+# MAIN GAME WINDOW
+# ---------------------------
+
+class MainWindow(QMainWindow):
+
+    def __init__(self,username):
+        super().__init__()
+
+        self.username = username
+        self.save_file = os.path.join(SAVE_DIR,f"{username}.json")
 
         uic.loadUi(os.path.join(BASE_DIR,"ui","main_window.ui"),self)
 
@@ -54,7 +139,6 @@ class MainWindow(QMainWindow):
 
         self.animations = []
 
-        # UI style
         self.setStyleSheet("""
         QMainWindow { background:#1e1e2e; color:white; font-family:Segoe UI;}
         QPushButton {
@@ -92,7 +176,6 @@ class MainWindow(QMainWindow):
         self.populate_tasks()
         self.generate_daily_quests()
 
-        # motivation refresh
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_motivation)
         self.timer.start(10000)
@@ -113,6 +196,23 @@ class MainWindow(QMainWindow):
     # BOSS
     # ---------------------------
 
+    def shake_widget(self, widget):
+
+        anim = QPropertyAnimation(widget, b"pos")
+        anim.setDuration(300)
+
+        start = widget.pos()
+
+        anim.setKeyValueAt(0, start)
+        anim.setKeyValueAt(0.25, start + QPoint(-10, 0))
+        anim.setKeyValueAt(0.5, start + QPoint(10, 0))
+        anim.setKeyValueAt(0.75, start + QPoint(-6, 0))
+        anim.setKeyValueAt(1, start)
+
+        anim.start()
+
+        self.animations.append(anim)
+
     def setup_boss(self):
 
         week = datetime.date.today().isocalendar()[1]
@@ -125,9 +225,8 @@ class MainWindow(QMainWindow):
         self.bossHpBar.setMaximum(self.boss_max_hp)
         self.bossHpBar.setValue(self.boss_hp)
 
-    def damage_boss(self, dmg):
+    def damage_boss(self,dmg):
 
-        # strength bonus
         dmg += self.game.stats["strength"]
 
         if self.game.upgrades["sword"]:
@@ -145,13 +244,14 @@ class MainWindow(QMainWindow):
         self.animations.append(anim)
 
         self.show_damage_popup(dmg)
+        self.shake_widget(self.bossHpBar)
 
         if self.boss_hp == 0:
 
             reward = random.randint(100,200)
 
             if self.game.upgrades["gold_boost"]:
-                reward = int(reward * 1.5)
+                reward = int(reward*1.5)
 
             self.game.gold += reward
 
@@ -170,15 +270,11 @@ class MainWindow(QMainWindow):
     def show_damage_popup(self,dmg):
 
         label = QLabel(f"-{dmg}",self)
-        label.setStyleSheet("""
-        color:#f38ba8;
-        font-size:22px;
-        font-weight:bold;
-        """)
+        label.setStyleSheet("color:#f38ba8;font-size:22px;font-weight:bold;")
         label.adjustSize()
 
-        start_x = self.bossHpBar.x() + 200
-        start_y = self.bossHpBar.y() - 10
+        start_x = self.bossHpBar.x()+200
+        start_y = self.bossHpBar.y()-10
 
         label.move(start_x,start_y)
         label.show()
@@ -192,6 +288,32 @@ class MainWindow(QMainWindow):
         self.animations.append(anim)
 
         QTimer.singleShot(800,label.deleteLater)
+
+    # ---------------------------
+    # XP POPUP
+    # ---------------------------
+
+    def show_xp_popup(self, xp):
+
+        label = QLabel(f"+{xp} XP", self)
+        label.setStyleSheet("color:#a6e3a1;font-size:18px;font-weight:bold;")
+        label.adjustSize()
+
+        start_x = self.xpBar.x() + 150
+        start_y = self.xpBar.y() - 10
+
+        label.move(start_x, start_y)
+        label.show()
+
+        anim = QPropertyAnimation(label, b"pos")
+        anim.setDuration(800)
+        anim.setStartValue(QPoint(start_x, start_y))
+        anim.setEndValue(QPoint(start_x, start_y - 40))
+        anim.start()
+
+        self.animations.append(anim)
+
+        QTimer.singleShot(800, label.deleteLater)
 
     # ---------------------------
     # SHOP
@@ -252,7 +374,12 @@ class MainWindow(QMainWindow):
     def create_task(self):
 
         name=self.taskName.text()
+
         if not name:
+            return
+
+        if len(self.game.tasks) >= 20:
+            QMessageBox.information(self,"Tasks","Task limit reached")
             return
 
         xp=self.taskXP.value()
@@ -297,6 +424,7 @@ class MainWindow(QMainWindow):
             xp = int(xp*1.5)
 
         self.game.xp += xp
+        self.show_xp_popup(xp)
         self.game.gold += 10
         self.game.streak += 1
 
@@ -358,6 +486,22 @@ class MainWindow(QMainWindow):
     # LEVEL
     # ---------------------------
 
+    def level_up_effect(self):
+
+        self.xpBar.setStyleSheet("""
+        QProgressBar::chunk {
+            background: gold;
+            border-radius:6px;
+        }
+        """)
+
+        QTimer.singleShot(1200, lambda: self.xpBar.setStyleSheet("""
+        QProgressBar::chunk {
+            background:#89b4fa;
+            border-radius:6px;
+        }
+        """))
+
     def check_level_up(self):
 
         while self.game.xp >= self.game.xp_needed:
@@ -371,9 +515,10 @@ class MainWindow(QMainWindow):
             self.game.stats["luck"] += 1
 
             QMessageBox.information(self,"LEVEL UP",f"You reached level {self.game.level}!")
+            self.level_up_effect()
 
     # ---------------------------
-    # SAVE
+    # SAVE / LOAD
     # ---------------------------
 
     def save_game(self):
@@ -382,23 +527,29 @@ class MainWindow(QMainWindow):
             "level":self.game.level,
             "xp":self.game.xp,
             "gold":self.game.gold,
-            "tasks":self.game.tasks
+            "tasks":self.game.tasks,
+            "stats":self.game.stats,
+            "upgrades":self.game.upgrades,
+            "streak":self.game.streak
         }
 
-        with open(SAVE_FILE,"w") as f:
-            json.dump(data,f)
+        with open(self.save_file,"w") as f:
+            json.dump(data,f,indent=2)
 
     def load_game(self):
 
-        if os.path.exists(SAVE_FILE):
+        if os.path.exists(self.save_file):
 
-            with open(SAVE_FILE,"r") as f:
+            with open(self.save_file,"r") as f:
                 data=json.load(f)
 
             self.game.level=data.get("level",1)
             self.game.xp=data.get("xp",0)
             self.game.gold=data.get("gold",0)
             self.game.tasks=data.get("tasks",[])
+            self.game.stats=data.get("stats",self.game.stats)
+            self.game.upgrades=data.get("upgrades",self.game.upgrades)
+            self.game.streak=data.get("streak",0)
 
     # ---------------------------
     # UI
@@ -434,11 +585,15 @@ class MainWindow(QMainWindow):
         self.motivationLabel.setText(random.choice(MOTIVATION))
 
 
+# ---------------------------
+# START APP
+# ---------------------------
+
 if __name__ == "__main__":
 
     app = QApplication(sys.argv)
 
-    window = MainWindow()
-    window.show()
+    login = LoginWindow()
+    login.show()
 
     sys.exit(app.exec())
