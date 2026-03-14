@@ -27,9 +27,7 @@ MOTIVATION = [
 ]
 
 
-# ---------------------------
 # GAME STATE
-# ---------------------------
 
 class GameState:
     def __init__(self):
@@ -49,9 +47,7 @@ class GameState:
         }
 
 
-# ---------------------------
 # LOGIN WINDOW
-# ---------------------------
 
 class LoginWindow(QMainWindow):
 
@@ -119,9 +115,7 @@ class LoginWindow(QMainWindow):
         self.close()
 
 
-# ---------------------------
 # MAIN GAME WINDOW
-# ---------------------------
 
 class MainWindow(QMainWindow):
 
@@ -182,9 +176,7 @@ class MainWindow(QMainWindow):
 
         self.update_ui()
 
-    # ---------------------------
     # NAVIGATION
-    # ---------------------------
 
     def setup_navigation(self):
         self.btnDashboard.clicked.connect(lambda: self.pages.setCurrentWidget(self.pageDashboard))
@@ -192,9 +184,7 @@ class MainWindow(QMainWindow):
         self.btnTasks.clicked.connect(lambda: self.pages.setCurrentWidget(self.pageTasks))
         self.btnShop.clicked.connect(lambda: self.pages.setCurrentWidget(self.pageShop))
 
-    # ---------------------------
     # BOSS
-    # ---------------------------
 
     def shake_widget(self, widget):
 
@@ -263,9 +253,7 @@ class MainWindow(QMainWindow):
 
             self.setup_boss()
 
-    # ---------------------------
     # DAMAGE POPUP
-    # ---------------------------
 
     def show_damage_popup(self,dmg):
 
@@ -289,9 +277,7 @@ class MainWindow(QMainWindow):
 
         QTimer.singleShot(800,label.deleteLater)
 
-    # ---------------------------
     # XP POPUP
-    # ---------------------------
 
     def show_xp_popup(self, xp):
 
@@ -315,9 +301,7 @@ class MainWindow(QMainWindow):
 
         QTimer.singleShot(800, label.deleteLater)
 
-    # ---------------------------
     # SHOP
-    # ---------------------------
 
     def setup_shop(self):
 
@@ -343,9 +327,7 @@ class MainWindow(QMainWindow):
         self.update_ui()
         self.save_game()
 
-    # ---------------------------
     # TASKS
-    # ---------------------------
 
     def setup_tasks(self):
 
@@ -439,9 +421,7 @@ class MainWindow(QMainWindow):
         self.update_ui()
         self.save_game()
 
-    # ---------------------------
     # DAILY QUESTS
-    # ---------------------------
 
     def generate_daily_quests(self):
 
@@ -482,9 +462,7 @@ class MainWindow(QMainWindow):
         self.update_ui()
         self.save_game()
 
-    # ---------------------------
     # LEVEL
-    # ---------------------------
 
     def level_up_effect(self):
 
@@ -517,9 +495,7 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self,"LEVEL UP",f"You reached level {self.game.level}!")
             self.level_up_effect()
 
-    # ---------------------------
     # SAVE / LOAD
-    # ---------------------------
 
     def save_game(self):
 
@@ -551,9 +527,7 @@ class MainWindow(QMainWindow):
             self.game.upgrades=data.get("upgrades",self.game.upgrades)
             self.game.streak=data.get("streak",0)
 
-    # ---------------------------
     # UI
-    # ---------------------------
 
     def update_ui(self):
 
@@ -584,10 +558,6 @@ class MainWindow(QMainWindow):
     def update_motivation(self):
         self.motivationLabel.setText(random.choice(MOTIVATION))
 
-
-# ---------------------------
-# START APP
-# ---------------------------
 
 if __name__ == "__main__":
 

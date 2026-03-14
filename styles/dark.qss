@@ -1,27 +1,70 @@
+/* ===== GLOBAL ===== */
 QWidget {
-background-color: #0f1117;
-color: #e5e7eb;
-font-family: Segoe UI;
-font-size: 14px;
+    background-color: #0e0f14;
+    color: #e5e7eb;
+    font-family: "Segoe UI";
+    font-size: 14px;
 }
+
+/* ===== TITLES ===== */
+QLabel {
+    color: #e5e7eb;
+}
+
+QLabel#bossNameLabel {
+    font-size: 20px;
+    font-weight: bold;
+    color: #f87171;
+}
+
+/* ===== PANELS ===== */
+QFrame {
+    background-color: #141621;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+#bossPanel {
+    background-color: #1b1e2b;
+    border: 2px solid #7c2d12;
+}
+
+/* ===== BUTTONS ===== */
 QPushButton {
-background-color: #2563eb;
-border-radius: 10px;
-padding: 8px 16px;
-font-weight: 600;
+    background-color: #2563eb;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-weight: bold;
 }
-QPushButton:hover { background-color: #1d4ed8; }
+
+QPushButton:hover {
+    background-color: #1d4ed8;
+}
+
+QPushButton#completeQuestButton {
+    background-color: #16a34a;
+}
+
+QPushButton#completeQuestButton:hover {
+    background-color: #15803d;
+}
+
+/* ===== LIST ===== */
+QListWidget {
+    background-color: #0f172a;
+    border-radius: 10px;
+    padding: 6px;
+}
+
+/* ===== HP BAR ===== */
 QProgressBar {
-background: #1f2937;
-border-radius: 8px;
-height: 16px;
+    background-color: #020617;
+    border-radius: 8px;
+    height: 18px;
+    text-align: center;
 }
+
 QProgressBar::chunk {
-background-color: #22c55e;
-border-radius: 8px;
-}
-QLineEdit {
-background-color: #111827;
-border-radius: 8px;
-padding: 8px;
+    background-color: #dc2626;
+    border-radius: 8px;
 }

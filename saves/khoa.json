@@ -1,8 +1,14 @@
 {
   "level": 4,
-  "xp": 36,
+  "xp": 66,
   "gold": 48,
-  "tasks": [],
+  "tasks": [
+    {
+      "name": "lap trinh",
+      "xp": 20,
+      "dmg": 10
+    }
+  ],
   "stats": {
     "strength": 4,
     "focus": 4,
